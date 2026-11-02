@@ -147,8 +147,9 @@ footer{color:var(--muted);font-size:.9rem;padding:0 0 2.5rem}
     <dt>Date</dt><dd id="factDate"></dd>
     <dt>Time</dt><dd id="factTime"></dd>
     <dt>Where</dt><dd id="factWhere"></dd>
+    <dt>Sunday</dt><dd id="factSunday"></dd>
   </dl>
-  <p class="lede">This year, all unloading and sorting happens outside along a line of tables in front of the pantry. Food goes inside only after it is sorted, boxed, and weighed. Sign up for a shift, offer equipment, or both.</p>
+  <p class="lede">This year, all unloading and sorting happens outside along a line of tables in front of the pantry. Food goes inside only after it is sorted, boxed, and weighed. On Sunday, a smaller crew finishes sorting and shelving inside. Sign up for a shift, offer equipment, or both.</p>
 
   <section class="flow" aria-labelledby="flowTitle">
     <h2 id="flowTitle">How the line works</h2>
@@ -230,7 +231,7 @@ footer{color:var(--muted);font-size:.9rem;padding:0 0 2.5rem}
   <!-- Volunteering -->
   <fieldset id="volunteerSection" hidden>
     <legend>Shifts and roles</legend>
-    <p class="section-intro">Shifts are three hours and overlap, so each incoming shift is trained by the outgoing one.</p>
+    <p class="section-intro">Drop-off day shifts are three hours and overlap, so each incoming shift is trained by the outgoing one. The Sunday shift is sorting and shelving only.</p>
     <div class="field" data-group="shifts">
       <span class="group-label" id="shiftLabel">Which shifts can you work?<span class="req">Choose at least one</span></span>
       <div class="choices cols" id="shiftChoices" aria-labelledby="shiftLabel"></div>
@@ -242,10 +243,10 @@ footer{color:var(--muted);font-size:.9rem;padding:0 0 2.5rem}
       <input type="number" id="extraPeople" name="extraPeople" min="0" max="20" step="1" value="0" inputmode="numeric" style="max-width:8rem">
     </div>
     <div class="field" data-group="roles">
-      <span class="group-label" id="roleLabel">Which roles interest you?<span class="req">Choose at least one</span></span>
-      <span class="hint">Pick all that apply. We will rotate you.</span>
+      <span class="group-label" id="roleLabel">Which roles interest you?<span class="req" id="roleReq">Choose at least one</span></span>
+      <span class="hint">These roles are for the drop-off day. Pick all that apply, and we will rotate you. Sunday volunteers sort and shelve, so no role choice is needed for Sunday.</span>
       <div class="choices" id="roleChoices" aria-labelledby="roleLabel"></div>
-      <div class="err">Choose at least one role.</div>
+      <div class="err">Choose at least one role for your drop-off day shift.</div>
     </div>
     <div class="field">
       <label for="notes">Anything we should know?</label>
@@ -347,14 +348,20 @@ footer{color:var(--muted);font-size:.9rem;padding:0 0 2.5rem}
 <script>
 /* ================= CONFIG: edit these before sharing ================= */
 const CONFIG = {
-  scriptUrl: "https://script.google.com/macros/s/AKfycbxs5mQ79lcZVWiTAvmC6RJXHrS9Tvr6KUn9Y7REZwLIyHacI2xtoBUTrhQ2_hYsOg8p/exec", // ends in /exec
-  hostUnit: "Food Drop off Organized by Troop 43G",
-  eventDate: "November 21, 2026",
-  startTime: "9:00 AM",
-  endTime: "4:00 PM",
+  scriptUrl: "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE", // ends in /exec
+  hostUnit: "Hosted by Troop 43G",
+  eventDate: "[date]",
+  startTime: "10:00 AM",
+  endTime: "6:00 PM",
   location: "Woodford Food Pantry, Beasley Rd. Enter from Field of Dreams; cars do not enter the pantry lot.",
-  shifts: ["9:00 AM to 12:00 PM", "11:00 AM to 2:00 PM", "1:00 PM to 4:00 PM"],
-  questionsContact: "alvance13@gmail.com" // optional, e.g. "Questions? Email name@example.com"
+  shifts: ["10:00 AM to 1:00 PM", "12:30 PM to 3:30 PM", "3:00 PM to 6:00 PM"],
+  sundayShift: {
+    date: "Sunday, [date]",
+    value: "Sunday 2:00 PM to 6:00 PM", // saved to the sheet; must match Code.gs SHIFTS
+    time: "2:00 PM to 6:00 PM",
+    note: "Sorting and shelving inside the pantry only"
+  },
+  questionsContact: "" // optional, e.g. "Questions? Email name@example.com"
 };
 /* ===================================================================== */
 
@@ -387,12 +394,14 @@ $("#hostLine").textContent = CONFIG.hostUnit;
 $("#factDate").textContent = CONFIG.eventDate;
 $("#factTime").textContent = `${CONFIG.startTime} to ${CONFIG.endTime}`;
 $("#factWhere").textContent = CONFIG.location;
+$("#factSunday").textContent = `${CONFIG.sundayShift.date}, ${CONFIG.sundayShift.time}: ${CONFIG.sundayShift.note.toLowerCase()}`;
 $("#pickupNowLabel").textContent = `At the drop-off site right after the event (about ${CONFIG.endTime})`;
 $("#footer").textContent = CONFIG.questionsContact;
 if (!/^https:\/\/script\.google\.com\//.test(CONFIG.scriptUrl)) $("#setupNotice").hidden = false;
 
 $("#shiftChoices").innerHTML = CONFIG.shifts.map(s =>
-  `<label class="choice"><input type="checkbox" name="shifts" value="${s}"><span><b>${s}</b></span></label>`).join("");
+  `<label class="choice"><input type="checkbox" name="shifts" value="${s}"><span><b>${s}</b><small>Drop-off day</small></span></label>`).join("") +
+  `<label class="choice"><input type="checkbox" name="shifts" value="${CONFIG.sundayShift.value}" data-sunday="1"><span><b>${CONFIG.sundayShift.date}, ${CONFIG.sundayShift.time}</b><small>${CONFIG.sundayShift.note}</small></span></label>`;
 
 $("#roleChoices").innerHTML = ROLES.map(r =>
   `<label class="choice"><input type="checkbox" name="roles" value="${r.v}" ${r.adult ? 'data-adult="1"' : ""}>
@@ -415,6 +424,8 @@ const checked = name => $$(`input[name="${name}"]:checked`).map(i => i.value);
 const radio = name => ($(`input[name="${name}"]:checked`) || {}).value || "";
 const num = el => Math.max(0, parseInt(el.value, 10) || 0);
 const digits = s => (s || "").replace(/\D/g, "");
+// Roles are only asked for drop-off day shifts; Sunday is sorting and shelving.
+const needsRoles = () => $$('input[name="shifts"]:checked').some(i => !i.dataset.sunday);
 
 function hasReturnables(){
   const anyRet = $$('input[data-eq][data-ret="1"]').some(i => num(i) > 0);
@@ -439,6 +450,8 @@ function sync(){
 
   $("#pickupBlock").hidden = !hasReturnables();
   $("#availBlock").hidden = radio("returnPickup") !== "Later at the scout house";
+
+  $("#roleReq").hidden = !needsRoles();
 }
 
 form.addEventListener("click", e => {
@@ -493,7 +506,7 @@ function validate(){
 
   if (suf.includes("Volunteer")) {
     if (!checked("shifts").length) groupErr("shifts", "Choose at least one shift.");
-    if (!checked("roles").length) groupErr("roles", "Choose at least one role.");
+    if (needsRoles() && !checked("roles").length) groupErr("roles", "Choose at least one role for your drop-off day shift.");
   }
   if (suf.includes("Equipment")) {
     const anyQty = $$("input[data-eq]").some(i => num(i) > 0) || ($("#otherItem").value.trim() && num($("#otherQty")) > 0);
