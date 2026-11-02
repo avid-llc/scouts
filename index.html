@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scouting for Food Drop-Off: Volunteer and Equipment Sign-Up</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🥫</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Young+Serif&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --bg:#F6F5F8; --surface:#FFFFFF; --ink:#241C2B; --muted:#5E5568; --line:#DCD6E2;
+  --plum:#5A2D6B; --plum-ink:#FFFFFF; --plum-soft:#F0E9F4;
+  --kraft:#9C7237; --kraft-soft:#F4ECDF;
+  --error:#A3262E; --error-soft:#FBECEC;
+  --ok:#2F6B4F;
+  --serif:"Young Serif", Georgia, "Times New Roman", serif;
+  --sans:"Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    color-scheme: dark;
+    --bg:#18141C; --surface:#221C28; --ink:#EEE9F2; --muted:#B3A9BD; --line:#3A3243;
+    --plum:#C9A6DA; --plum-ink:#1B1220; --plum-soft:#2E2436;
+    --kraft:#D7B27C; --kraft-soft:#2F271D;
+    --error:#F08A90; --error-soft:#3A1F23;
+    --ok:#8FD1B0;
+  }
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:1.0625rem;line-height:1.55}
+a{color:var(--plum)}
+.wrap{max-width:720px;margin:0 auto;padding:0 1.25rem}
+
+/* Hero */
+header.hero{padding:3rem 0 1.5rem}
+.host{color:var(--muted);margin:0 0 .5rem;font-size:.95rem}
+h1{font-family:var(--serif);font-weight:400;font-size:clamp(2rem,6vw,2.9rem);line-height:1.1;margin:0 0 1rem;letter-spacing:-.01em}
+.facts{display:grid;grid-template-columns:auto 1fr;gap:.25rem 1rem;margin:0 0 1.25rem}
+.facts dt{color:var(--muted)}
+.facts dd{margin:0}
+.lede{margin:0;max-width:62ch}
+
+/* Food flow line: the line of tables */
+.flow{margin:2rem 0 0;padding:1.25rem 0 .5rem;border-top:1px solid var(--line)}
+.flow h2{font-family:var(--serif);font-weight:400;font-size:1.25rem;margin:0 0 .25rem}
+.flow p{margin:0 0 1rem;color:var(--muted);font-size:.95rem}
+.line{overflow-x:auto;padding-bottom:.75rem;-webkit-overflow-scrolling:touch}
+.line ol{list-style:none;margin:0;padding:0;display:flex;gap:0;min-width:max-content;position:relative}
+.line li{position:relative;width:118px;padding:0 .5rem;text-align:left}
+.line li::before{content:"";position:absolute;top:21px;left:0;right:0;border-top:2px dashed var(--kraft)}
+.line li:first-child::before{left:50%}
+.line li:last-child::before{right:50%}
+.box{position:relative;width:44px;height:44px;margin:0 auto .6rem;background:var(--kraft-soft);border:2px solid var(--kraft);border-radius:4px;display:grid;place-items:center;font-size:1.2rem}
+.box::after{content:"";position:absolute;top:-2px;left:50%;width:8px;height:44px;margin-left:-4px;background:var(--kraft);opacity:.35}
+.line strong{display:block;text-align:center;font-size:.95rem}
+.line span{display:block;text-align:center;font-size:.8rem;color:var(--muted);line-height:1.35}
+.line li.staff .box{border-style:dashed;background:transparent}
+
+/* Notice */
+.notice{background:var(--kraft-soft);border:1px solid var(--kraft);border-radius:8px;padding:.85rem 1rem;margin:1rem 0;font-size:.95rem}
+
+/* Form */
+form{padding:1rem 0 3rem}
+fieldset{border:0;border-top:2px solid var(--ink);margin:2.25rem 0 0;padding:1.25rem 0 0;min-width:0}
+fieldset[hidden]{display:none}
+legend{font-family:var(--serif);font-size:1.5rem;padding:0 .5rem 0 0;float:left;width:100%;margin-bottom:.35rem}
+legend + *{clear:both}
+.section-intro{color:var(--muted);margin:0 0 1rem;max-width:62ch}
+.field{margin:0 0 1.15rem}
+.field > label, .group-label{display:block;font-weight:700;margin-bottom:.35rem}
+.req{color:var(--plum);font-weight:400;font-size:.9rem;margin-left:.25rem}
+.hint{display:block;color:var(--muted);font-size:.92rem;margin:-.15rem 0 .45rem;font-weight:400}
+input[type=text],input[type=email],input[type=tel],input[type=number],textarea{
+  width:100%;font:inherit;color:var(--ink);background:var(--surface);
+  border:1.5px solid var(--line);border-radius:6px;padding:.65rem .75rem;
+}
+textarea{min-height:5.5rem;resize:vertical}
+input:focus-visible,textarea:focus-visible,button:focus-visible,.choice input:focus-visible + span{outline:3px solid var(--plum);outline-offset:2px}
+[aria-invalid=true]{border-color:var(--error)!important}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:0 1rem}
+@media (max-width:560px){.two{grid-template-columns:1fr}}
+
+.choices{display:grid;gap:.5rem}
+.choices.cols{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}
+.choice{display:flex;gap:.65rem;align-items:flex-start;background:var(--surface);border:1.5px solid var(--line);border-radius:6px;padding:.65rem .8rem;cursor:pointer}
+.choice:has(input:checked){border-color:var(--plum);background:var(--plum-soft)}
+.choice:has(input:disabled){opacity:.55;cursor:not-allowed}
+.choice input{margin:.25rem 0 0;width:1.1rem;height:1.1rem;accent-color:var(--plum);flex:none}
+.choice b{display:block;font-weight:700}
+.choice small{display:block;color:var(--muted);font-size:.88rem;line-height:1.4}
+.tag{display:inline-block;font-size:.78rem;border:1px solid var(--muted);color:var(--muted);border-radius:999px;padding:0 .45rem;margin-left:.35rem;vertical-align:1px}
+
+.group-error .choices .choice{border-color:var(--error)}
+.err{display:none;color:var(--error);font-size:.92rem;margin-top:.35rem}
+.has-error .err{display:block}
+
+/* Equipment */
+.equip h3{font-family:var(--serif);font-weight:400;font-size:1.1rem;margin:1.25rem 0 .2rem}
+.equip .hint{margin:0 0 .6rem}
+.item{display:flex;align-items:center;justify-content:space-between;gap:1rem;padding:.55rem 0;border-bottom:1px solid var(--line)}
+.item:last-of-type{border-bottom:0}
+.stepper{display:flex;align-items:center;gap:.35rem;flex:none}
+.stepper button{width:2.25rem;height:2.25rem;border-radius:6px;border:1.5px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;font-size:1.2rem;line-height:1;cursor:pointer}
+.stepper button:hover{border-color:var(--plum)}
+.stepper input{width:4rem;text-align:center;padding:.4rem}
+.other{display:grid;grid-template-columns:1fr 7.5rem;gap:.75rem;align-items:end;margin-top:.75rem}
+.other .field{margin:0}
+.reveal{border-left:3px solid var(--plum);padding:.25rem 0 .25rem 1rem;margin:1rem 0 1.15rem}
+.reveal[hidden]{display:none}
+
+/* Errors summary + submit */
+.summary{display:none;background:var(--error-soft);border:1.5px solid var(--error);border-radius:8px;padding:.9rem 1rem;margin:1.5rem 0 0}
+.summary.show{display:block}
+.summary h2{font-size:1rem;margin:0 0 .35rem}
+.summary ul{margin:0;padding-left:1.2rem}
+.actions{margin-top:2rem;display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.btn{font:inherit;font-weight:700;background:var(--plum);color:var(--plum-ink);border:0;border-radius:6px;padding:.85rem 1.6rem;cursor:pointer}
+.btn:disabled{opacity:.6;cursor:progress}
+.btn.secondary{background:transparent;color:var(--plum);border:1.5px solid var(--plum)}
+.status{color:var(--muted)}
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+
+/* Confirmation */
+.done{padding:2rem 0 4rem}
+.done[hidden]{display:none}
+.done h2{font-family:var(--serif);font-weight:400;font-size:2rem;margin:0 0 .5rem}
+.recap{background:var(--surface);border:1.5px solid var(--line);border-radius:8px;padding:1rem 1.15rem;margin:1.25rem 0}
+.recap dl{display:grid;grid-template-columns:minmax(120px,auto) 1fr;gap:.4rem 1rem;margin:0}
+.recap dt{color:var(--muted)}
+.recap dd{margin:0}
+footer{color:var(--muted);font-size:.9rem;padding:0 0 2.5rem}
+@media (prefers-reduced-motion:no-preference){.done:not([hidden]){animation:rise .35s ease-out}}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="hero">
+  <p class="host" id="hostLine"></p>
+  <h1>Scouting for Food drop-off: volunteer and equipment sign-up</h1>
+  <dl class="facts">
+    <dt>Date</dt><dd id="factDate"></dd>
+    <dt>Time</dt><dd id="factTime"></dd>
+    <dt>Where</dt><dd id="factWhere"></dd>
+  </dl>
+  <p class="lede">This year, all unloading and sorting happens outside along a line of tables in front of the pantry. Food goes inside only after it is sorted, boxed, and weighed. Sign up for a shift, offer equipment, or both.</p>
+
+  <section class="flow" aria-labelledby="flowTitle">
+    <h2 id="flowTitle">How the line works</h2>
+    <p>Each role is one stop along the line. Scouts rotate, so pick any roles you would like to try.</p>
+    <div class="line" tabindex="0" aria-label="Food flow, from car to pantry shelf">
+      <ol>
+        <li><div class="box" aria-hidden="true">🚗</div><strong>Greet</strong><span>Direct cars forward</span></li>
+        <li><div class="box" aria-hidden="true">🛍️</div><strong>Unload</strong><span>Take food from cars</span></li>
+        <li><div class="box" aria-hidden="true">🛒</div><strong>Haul</strong><span>Wagon food to tables by category</span></li>
+        <li><div class="box" aria-hidden="true">🥫</div><strong>Sort</strong><span>Sort into pantry subcategories</span></li>
+        <li><div class="box" aria-hidden="true">📦</div><strong>Run</strong><span>Carry full boxes to the scale</span></li>
+        <li class="staff"><div class="box" aria-hidden="true">⚖️</div><strong>Weigh</strong><span>Pantry staff log totals</span></li>
+        <li><div class="box" aria-hidden="true">🗄️</div><strong>Stock</strong><span>Shelve food, return empty boxes</span></li>
+      </ol>
+    </div>
+  </section>
+  <div class="notice" id="setupNotice" hidden>This form is not connected to a response sheet yet. Add the web app URL to <code>CONFIG.scriptUrl</code> before sharing the link.</div>
+</header>
+
+<form id="signup" novalidate>
+  <div class="summary" id="errSummary" role="alert" tabindex="-1">
+    <h2>Please fix the following before signing up:</h2>
+    <ul id="errList"></ul>
+  </div>
+
+  <!-- About you -->
+  <fieldset>
+    <legend>About you</legend>
+    <div class="field">
+      <label for="name">Full name<span class="req">Required</span></label>
+      <input type="text" id="name" name="name" autocomplete="name" required>
+    </div>
+    <div class="two">
+      <div class="field">
+        <label for="phone">Phone number<span class="req">Required</span></label>
+        <input type="tel" id="phone" name="phone" autocomplete="tel" required>
+      </div>
+      <div class="field">
+        <label for="email">Email<span class="req">Required</span></label>
+        <input type="email" id="email" name="email" autocomplete="email" required>
+      </div>
+    </div>
+    <div class="field">
+      <label for="unit">Unit or troop</label>
+      <input type="text" id="unit" name="unit" placeholder="For example, Troop 43G">
+    </div>
+    <div class="field" data-group="personType">
+      <span class="group-label" id="personTypeLabel">I am a...<span class="req">Required</span></span>
+      <div class="choices cols" role="radiogroup" aria-labelledby="personTypeLabel">
+        <label class="choice"><input type="radio" name="personType" value="Scout"><span><b>Scout</b></span></label>
+        <label class="choice"><input type="radio" name="personType" value="Parent or guardian"><span><b>Parent or guardian</b></span></label>
+        <label class="choice"><input type="radio" name="personType" value="Adult leader"><span><b>Adult leader</b></span></label>
+        <label class="choice"><input type="radio" name="personType" value="Other"><span><b>Other</b></span></label>
+      </div>
+      <div class="err">Choose the option that describes you.</div>
+    </div>
+    <div class="reveal" id="guardianBlock" hidden>
+      <div class="two">
+        <div class="field">
+          <label for="guardianName">Parent or guardian name<span class="req">Required for scouts</span></label>
+          <input type="text" id="guardianName" name="guardianName">
+        </div>
+        <div class="field">
+          <label for="guardianPhone">Parent or guardian phone<span class="req">Required for scouts</span></label>
+          <input type="tel" id="guardianPhone" name="guardianPhone">
+        </div>
+      </div>
+    </div>
+    <div class="field" data-group="signingUpFor">
+      <span class="group-label" id="sufLabel">I am signing up to...<span class="req">Choose at least one</span></span>
+      <div class="choices cols" aria-labelledby="sufLabel">
+        <label class="choice"><input type="checkbox" name="signingUpFor" value="Volunteer"><span><b>Volunteer at the drop-off</b><small>Work one or more shifts</small></span></label>
+        <label class="choice"><input type="checkbox" name="signingUpFor" value="Equipment"><span><b>Lend or donate equipment</b><small>Wagons, tables, canopies, supplies</small></span></label>
+      </div>
+      <div class="err">Choose volunteering, equipment, or both.</div>
+    </div>
+  </fieldset>
+
+  <!-- Volunteering -->
+  <fieldset id="volunteerSection" hidden>
+    <legend>Shifts and roles</legend>
+    <p class="section-intro">Shifts are three hours and overlap, so each incoming shift is trained by the outgoing one.</p>
+    <div class="field" data-group="shifts">
+      <span class="group-label" id="shiftLabel">Which shifts can you work?<span class="req">Choose at least one</span></span>
+      <div class="choices cols" id="shiftChoices" aria-labelledby="shiftLabel"></div>
+      <div class="err">Choose at least one shift.</div>
+    </div>
+    <div class="field">
+      <label for="extraPeople">Scouts or family members coming with you</label>
+      <span class="hint">Not counting yourself. Each person who will also be volunteering should still fill out their own form if possible.</span>
+      <input type="number" id="extraPeople" name="extraPeople" min="0" max="20" step="1" value="0" inputmode="numeric" style="max-width:8rem">
+    </div>
+    <div class="field" data-group="roles">
+      <span class="group-label" id="roleLabel">Which roles interest you?<span class="req">Choose at least one</span></span>
+      <span class="hint">Pick all that apply. We will rotate you.</span>
+      <div class="choices" id="roleChoices" aria-labelledby="roleLabel"></div>
+      <div class="err">Choose at least one role.</div>
+    </div>
+    <div class="field">
+      <label for="notes">Anything we should know?</label>
+      <span class="hint">For example, a lifting limitation or a role you prefer.</span>
+      <textarea id="notes" name="notes"></textarea>
+    </div>
+  </fieldset>
+
+  <!-- Equipment -->
+  <fieldset id="equipmentSection" class="equip" hidden>
+    <legend>Equipment</legend>
+    <p class="section-intro">Enter how many of each item you can bring. Leave anything you are not bringing at zero.</p>
+
+    <div data-group="equipment">
+      <h3>Items we will return to you</h3>
+      <p class="hint">Please put your name on each item, such as a piece of tape on the bottom.</p>
+      <div id="returnItems"></div>
+
+      <h3>Supplies for the day</h3>
+      <p class="hint">These are used up during sign-making or the event and are not returned.</p>
+      <div id="supplyItems"></div>
+
+      <h3>Something else</h3>
+      <div class="other">
+        <div class="field">
+          <label for="otherItem">Item</label>
+          <input type="text" id="otherItem" name="otherItem" placeholder="For example, hand trucks">
+        </div>
+        <div class="field">
+          <label for="otherQty">How many</label>
+          <input type="number" id="otherQty" name="otherQty" min="0" max="99" step="1" value="0" inputmode="numeric">
+        </div>
+      </div>
+      <label class="choice" style="margin-top:.75rem" id="otherReturnWrap"><input type="checkbox" id="otherReturn" name="otherReturn"><span><b>Please return this item to me</b></span></label>
+      <div class="err" id="equipErr">Enter a quantity for at least one item, or uncheck equipment above.</div>
+    </div>
+
+    <div class="reveal" id="pickupBlock" hidden>
+      <div class="field" data-group="returnPickup">
+        <span class="group-label" id="pickupLabel">How would you like to get your items back?<span class="req">Required</span></span>
+        <div class="choices" aria-labelledby="pickupLabel">
+          <label class="choice"><input type="radio" name="returnPickup" value="At the drop-off site after the event"><span><b id="pickupNowLabel">At the drop-off site right after the event</b><small>Collect your items from the pantry at teardown.</small></span></label>
+          <label class="choice"><input type="radio" name="returnPickup" value="Later at the scout house"><span><b>Later at the scout house</b><small>Items go back to the scout house, and an adult leader will contact you to set a pickup time.</small></span></label>
+        </div>
+        <div class="err">Choose how you would like to get your items back.</div>
+      </div>
+      <div class="field" id="availBlock" hidden>
+        <label for="scoutHouseAvail">Days and times that usually work for a scout house pickup</label>
+        <span class="hint">We will match this with adult leader availability and confirm a time with you.</span>
+        <input type="text" id="scoutHouseAvail" name="scoutHouseAvail" placeholder="For example, weekday evenings after 6:00 PM">
+      </div>
+    </div>
+
+    <div class="field" data-group="carryHelp">
+      <span class="group-label" id="carryLabel">Can you help carry equipment to or from the site?</span>
+      <div class="choices cols" aria-labelledby="carryLabel">
+        <label class="choice"><input type="checkbox" name="carryHelp" value="Setup"><span><b>Setup</b><small>Bring items to the site</small></span></label>
+        <label class="choice"><input type="checkbox" name="carryHelp" value="Teardown"><span><b>Teardown</b><small>Take items home after</small></span></label>
+        <label class="choice"><input type="checkbox" name="carryHelp" value="Neither"><span><b>Neither</b></span></label>
+      </div>
+    </div>
+  </fieldset>
+
+  <!-- Contact -->
+  <fieldset>
+    <legend>Staying in touch</legend>
+    <div class="field" data-group="contactPref">
+      <span class="group-label" id="contactLabel">How do you prefer to be contacted?<span class="req">Required</span></span>
+      <div class="choices cols" role="radiogroup" aria-labelledby="contactLabel">
+        <label class="choice"><input type="radio" name="contactPref" value="GroupMe"><span><b>GroupMe</b></span></label>
+        <label class="choice"><input type="radio" name="contactPref" value="Text message"><span><b>Text message</b></span></label>
+        <label class="choice"><input type="radio" name="contactPref" value="Email"><span><b>Email</b></span></label>
+      </div>
+      <div class="err">Choose a contact method.</div>
+    </div>
+  </fieldset>
+
+  <div class="hp" aria-hidden="true">
+    <label for="website">Leave this field empty</label>
+    <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+  </div>
+
+  <div class="actions">
+    <button type="submit" class="btn" id="submitBtn">Sign up</button>
+    <span class="status" id="status" role="status" aria-live="polite"></span>
+  </div>
+</form>
+
+<section class="done" id="done" hidden tabindex="-1" aria-labelledby="doneTitle">
+  <h2 id="doneTitle">You are signed up</h2>
+  <p>Thank you for helping with Scouting for Food. An adult leader will follow up with role assignments and any equipment details before the event.</p>
+  <div class="recap"><dl id="recap"></dl></div>
+  <button type="button" class="btn secondary" id="againBtn">Sign up another person</button>
+</section>
+
+<footer id="footer"></footer>
+</div>
+
+<script>
+/* ================= CONFIG: edit these before sharing ================= */
+const CONFIG = {
+  scriptUrl: "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE", // ends in /exec
+  hostUnit: "Hosted by Troop 43G",
+  eventDate: "[date]",
+  startTime: "9:00 AM",
+  endTime: "4:00 PM",
+  location: "Woodford Food Pantry, Beasley Rd. Enter from Field of Dreams; cars do not enter the pantry lot.",
+  shifts: ["9:00 AM to 12:00 PM", "11:00 AM to 2:00 PM", "1:00 PM to 4:00 PM"],
+  questionsContact: "" // optional, e.g. "Questions? Email name@example.com"
+};
+/* ===================================================================== */
+
+const ROLES = [
+  {v:"Greeter / traffic director", d:"Directs cars forward and keeps them out of the pantry lot. Adults or the oldest scouts."},
+  {v:"Unloader", d:"Takes food from cars and hands it to haulers."},
+  {v:"Hauler", d:"Wagons food along the tables, dropping it by category."},
+  {v:"Sorter", d:"Sorts a table's category into the pantry's subcategories."},
+  {v:"Runner", d:"Carries sorted boxes from two assigned tables to the weigh station."},
+  {v:"Stocker", d:"Shelves food inside and returns empty boxes to the tables."},
+  {v:"Adult lead / float", d:"Assigns roles, covers breaks, and watches safety.", adult:true},
+  {v:"Adult safety monitor (car unloading)", d:"Stays at car unloading at all times.", adult:true}
+];
+const EQUIPMENT = [
+  {k:"wagons", label:"Wagons", ret:true},
+  {k:"cones", label:"Traffic cones", ret:true},
+  {k:"tables", label:"Folding tables", ret:true},
+  {k:"canopies", label:"Canopies (for rain)", ret:true},
+  {k:"posterBoard", label:"Poster board (sheets)", ret:false},
+  {k:"markers", label:"Markers (packs)", ret:false},
+  {k:"water", label:"Bottled water for the scouts (cases)", ret:false}
+];
+
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+const form = $("#signup");
+
+/* ---------- Render config-driven content ---------- */
+$("#hostLine").textContent = CONFIG.hostUnit;
+$("#factDate").textContent = CONFIG.eventDate;
+$("#factTime").textContent = `${CONFIG.startTime} to ${CONFIG.endTime}`;
+$("#factWhere").textContent = CONFIG.location;
+$("#pickupNowLabel").textContent = `At the drop-off site right after the event (about ${CONFIG.endTime})`;
+$("#footer").textContent = CONFIG.questionsContact;
+if (!/^https:\/\/script\.google\.com\//.test(CONFIG.scriptUrl)) $("#setupNotice").hidden = false;
+
+$("#shiftChoices").innerHTML = CONFIG.shifts.map(s =>
+  `<label class="choice"><input type="checkbox" name="shifts" value="${s}"><span><b>${s}</b></span></label>`).join("");
+
+$("#roleChoices").innerHTML = ROLES.map(r =>
+  `<label class="choice"><input type="checkbox" name="roles" value="${r.v}" ${r.adult ? 'data-adult="1"' : ""}>
+   <span><b>${r.v}${r.adult ? '<span class="tag">Adults only</span>' : ""}</b><small>${r.d}</small></span></label>`).join("");
+
+function itemRow(it){
+  return `<div class="item">
+    <label for="eq_${it.k}">${it.label}</label>
+    <div class="stepper">
+      <button type="button" data-step="-1" data-for="eq_${it.k}" aria-label="Remove one ${it.label}">−</button>
+      <input type="number" id="eq_${it.k}" data-eq="${it.k}" data-ret="${it.ret ? 1 : 0}" min="0" max="99" step="1" value="0" inputmode="numeric">
+      <button type="button" data-step="1" data-for="eq_${it.k}" aria-label="Add one ${it.label}">+</button>
+    </div></div>`;
+}
+$("#returnItems").innerHTML = EQUIPMENT.filter(e => e.ret).map(itemRow).join("");
+$("#supplyItems").innerHTML = EQUIPMENT.filter(e => !e.ret).map(itemRow).join("");
+
+/* ---------- Helpers ---------- */
+const checked = name => $$(`input[name="${name}"]:checked`).map(i => i.value);
+const radio = name => ($(`input[name="${name}"]:checked`) || {}).value || "";
+const num = el => Math.max(0, parseInt(el.value, 10) || 0);
+const digits = s => (s || "").replace(/\D/g, "");
+
+function hasReturnables(){
+  const anyRet = $$('input[data-eq][data-ret="1"]').some(i => num(i) > 0);
+  const otherRet = $("#otherItem").value.trim() && num($("#otherQty")) > 0 && $("#otherReturn").checked;
+  return anyRet || !!otherRet;
+}
+
+/* ---------- Conditional sections ---------- */
+function sync(){
+  const type = radio("personType");
+  const isScout = type === "Scout";
+  $("#guardianBlock").hidden = !isScout;
+
+  $$('#roleChoices input[data-adult]').forEach(i => {
+    i.disabled = isScout;
+    if (isScout) i.checked = false;
+  });
+
+  const suf = checked("signingUpFor");
+  $("#volunteerSection").hidden = !suf.includes("Volunteer");
+  $("#equipmentSection").hidden = !suf.includes("Equipment");
+
+  $("#pickupBlock").hidden = !hasReturnables();
+  $("#availBlock").hidden = radio("returnPickup") !== "Later at the scout house";
+}
+
+form.addEventListener("click", e => {
+  const b = e.target.closest("button[data-step]");
+  if (!b) return;
+  const input = document.getElementById(b.dataset.for);
+  input.value = Math.min(99, Math.max(0, num(input) + parseInt(b.dataset.step, 10)));
+  sync();
+});
+
+form.addEventListener("change", e => {
+  // "Neither" is exclusive with Setup/Teardown
+  if (e.target.name === "carryHelp") {
+    const boxes = $$('input[name="carryHelp"]');
+    if (e.target.value === "Neither" && e.target.checked) boxes.forEach(b => { if (b !== e.target) b.checked = false; });
+    if (e.target.value !== "Neither" && e.target.checked) boxes.find(b => b.value === "Neither").checked = false;
+  }
+  const grp = e.target.closest("[data-group]");
+  if (grp) grp.classList.remove("has-error", "group-error");
+  if (e.target.matches("input[type=text],input[type=email],input[type=tel]")) e.target.removeAttribute("aria-invalid");
+  sync();
+});
+form.addEventListener("input", e => {
+  if (e.target.matches("input[type=number], #otherItem")) sync();
+  if (e.target.hasAttribute("aria-invalid")) e.target.removeAttribute("aria-invalid");
+});
+
+/* ---------- Validation ---------- */
+function validate(){
+  const errors = [];
+  $$("[data-group]").forEach(g => g.classList.remove("has-error", "group-error"));
+  $$("[aria-invalid]").forEach(el => el.removeAttribute("aria-invalid"));
+
+  const fieldErr = (el, msg) => { el.setAttribute("aria-invalid", "true"); errors.push({el, msg}); };
+  const groupErr = (name, msg) => {
+    const g = $(`[data-group="${name}"]`);
+    g.classList.add("has-error", "group-error");
+    errors.push({el: g.querySelector("input") || g, msg});
+  };
+
+  if (!$("#name").value.trim()) fieldErr($("#name"), "Enter your full name.");
+  if (digits($("#phone").value).length < 10) fieldErr($("#phone"), "Enter a phone number with area code.");
+  const em = $("#email");
+  if (!em.value.trim() || !em.checkValidity()) fieldErr(em, "Enter a valid email address.");
+  if (!radio("personType")) groupErr("personType", "Choose the option that describes you.");
+  if (radio("personType") === "Scout") {
+    if (!$("#guardianName").value.trim()) fieldErr($("#guardianName"), "Enter a parent or guardian name.");
+    if (digits($("#guardianPhone").value).length < 10) fieldErr($("#guardianPhone"), "Enter a parent or guardian phone number with area code.");
+  }
+  const suf = checked("signingUpFor");
+  if (!suf.length) groupErr("signingUpFor", "Choose volunteering, equipment, or both.");
+
+  if (suf.includes("Volunteer")) {
+    if (!checked("shifts").length) groupErr("shifts", "Choose at least one shift.");
+    if (!checked("roles").length) groupErr("roles", "Choose at least one role.");
+  }
+  if (suf.includes("Equipment")) {
+    const anyQty = $$("input[data-eq]").some(i => num(i) > 0) || ($("#otherItem").value.trim() && num($("#otherQty")) > 0);
+    if (!anyQty) groupErr("equipment", "Enter a quantity for at least one equipment item, or uncheck equipment.");
+    if (hasReturnables() && !radio("returnPickup")) groupErr("returnPickup", "Choose how you would like to get your items back.");
+  }
+  if (!radio("contactPref")) groupErr("contactPref", "Choose a contact method.");
+
+  const sum = $("#errSummary"), list = $("#errList");
+  if (errors.length) {
+    list.innerHTML = "";
+    errors.forEach(({el, msg}) => {
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.href = "#"; a.textContent = msg;
+      a.addEventListener("click", ev => { ev.preventDefault(); el.focus(); el.scrollIntoView({block:"center"}); });
+      li.appendChild(a); list.appendChild(li);
+    });
+    sum.classList.add("show");
+    sum.focus();
+    return false;
+  }
+  sum.classList.remove("show");
+  return true;
+}
+
+/* ---------- Payload ---------- */
+function buildPayload(){
+  const suf = checked("signingUpFor");
+  const vol = suf.includes("Volunteer"), eqp = suf.includes("Equipment");
+  const isScout = radio("personType") === "Scout";
+  const equipment = {};
+  EQUIPMENT.forEach(e => equipment[e.k] = eqp ? num(document.getElementById("eq_" + e.k)) : 0);
+  const otherItem = eqp ? $("#otherItem").value.trim() : "";
+  const otherQty = eqp && otherItem ? num($("#otherQty")) : 0;
+  const returns = eqp && hasReturnables();
+  return {
+    name: $("#name").value.trim(),
+    phone: $("#phone").value.trim(),
+    email: $("#email").value.trim(),
+    unit: $("#unit").value.trim(),
+    personType: radio("personType"),
+    guardianName: isScout ? $("#guardianName").value.trim() : "",
+    guardianPhone: isScout ? $("#guardianPhone").value.trim() : "",
+    signingUpFor: suf,
+    shifts: vol ? checked("shifts") : [],
+    extraPeople: vol ? num($("#extraPeople")) : 0,
+    roles: vol ? checked("roles") : [],
+    notes: vol ? $("#notes").value.trim() : "",
+    equipment,
+    otherItem, otherQty,
+    otherReturn: !!(otherItem && otherQty && $("#otherReturn").checked),
+    returnPickup: returns ? radio("returnPickup") : "",
+    scoutHouseAvail: returns && radio("returnPickup") === "Later at the scout house" ? $("#scoutHouseAvail").value.trim() : "",
+    carryHelp: eqp ? checked("carryHelp") : [],
+    contactPref: radio("contactPref"),
+    website: $("#website").value
+  };
+}
+
+function renderRecap(p){
+  const rows = [["Name", p.name], ["Contact by", p.contactPref]];
+  if (p.shifts.length) rows.push(["Shifts", p.shifts.join("; ")]);
+  if (p.roles.length) rows.push(["Roles", p.roles.join("; ")]);
+  if (p.extraPeople) rows.push(["Bringing", `${p.extraPeople} more ${p.extraPeople === 1 ? "person" : "people"}`]);
+  const eq = EQUIPMENT.filter(e => p.equipment[e.k] > 0).map(e => `${p.equipment[e.k]} × ${e.label}`);
+  if (p.otherItem && p.otherQty) eq.push(`${p.otherQty} × ${p.otherItem}`);
+  if (eq.length) rows.push(["Equipment", eq.join("; ")]);
+  if (p.returnPickup) rows.push(["Item return", p.returnPickup]);
+  const dl = $("#recap"); dl.innerHTML = "";
+  rows.forEach(([k, v]) => {
+    const dt = document.createElement("dt"); dt.textContent = k;
+    const dd = document.createElement("dd"); dd.textContent = v;
+    dl.append(dt, dd);
+  });
+}
+
+/* ---------- Submit ---------- */
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+  if (!validate()) return;
+  const payload = buildPayload();
+  const btn = $("#submitBtn"), status = $("#status");
+
+  if (!/^https:\/\/script\.google\.com\//.test(CONFIG.scriptUrl)) {
+    console.log("Test payload (form not connected):", payload);
+    status.textContent = "This form is not connected yet, so nothing was saved. The response was written to the browser console for testing.";
+    return;
+  }
+
+  btn.disabled = true; status.textContent = "Saving your sign-up...";
+  try {
+    const res = await fetch(CONFIG.scriptUrl, {
+      method: "POST",
+      headers: {"Content-Type": "text/plain;charset=utf-8"},
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || "The sign-up sheet rejected the response.");
+    renderRecap(payload);
+    form.hidden = true;
+    const done = $("#done"); done.hidden = false; done.focus();
+    window.scrollTo({top: done.offsetTop - 16});
+  } catch (err) {
+    console.error(err);
+    status.textContent = "Your sign-up was not saved. Check your connection and select Sign up again.";
+  } finally {
+    btn.disabled = false;
+  }
+});
+
+$("#againBtn").addEventListener("click", () => {
+  form.reset();
+  $$('input[type=number]').forEach(i => i.value = 0);
+  $("#status").textContent = "";
+  $("#errSummary").classList.remove("show");
+  sync();
+  $("#done").hidden = true;
+  form.hidden = false;
+  window.scrollTo({top: form.offsetTop - 16});
+  $("#name").focus();
+});
+
+sync();
+</script>
+</body>
+</html>
