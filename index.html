@@ -166,7 +166,6 @@ footer{color:var(--muted);font-size:.9rem;padding:0 0 2.5rem}
       </ol>
     </div>
   </section>
-  <div class="notice" id="setupNotice" hidden>This form is not connected to a response sheet yet. Add the web app URL to <code>CONFIG.scriptUrl</code> before sharing the link.</div>
 </header>
 
 <form id="signup" novalidate>
@@ -348,7 +347,6 @@ footer{color:var(--muted);font-size:.9rem;padding:0 0 2.5rem}
 <script>
 /* ================= CONFIG: edit these before sharing ================= */
 const CONFIG = {
-  scriptUrl: "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE", // ends in /exec
   hostUnit: "Hosted by Troop 43G",
   eventDate: "[date]",
   startTime: "10:00 AM",
@@ -357,7 +355,7 @@ const CONFIG = {
   shifts: ["10:00 AM to 1:00 PM", "12:30 PM to 3:30 PM", "3:00 PM to 6:00 PM"],
   sundayShift: {
     date: "Sunday, [date]",
-    value: "Sunday 2:00 PM to 6:00 PM", // saved to the sheet; must match Code.gs SHIFTS
+    value: "Sunday 2:00 PM to 6:00 PM",
     time: "2:00 PM to 6:00 PM",
     note: "Sorting and shelving inside the pantry only"
   },
@@ -397,7 +395,7 @@ $("#factWhere").textContent = CONFIG.location;
 $("#factSunday").textContent = `${CONFIG.sundayShift.date}, ${CONFIG.sundayShift.time}: ${CONFIG.sundayShift.note.toLowerCase()}`;
 $("#pickupNowLabel").textContent = `At the drop-off site right after the event (about ${CONFIG.endTime})`;
 $("#footer").textContent = CONFIG.questionsContact;
-if (!/^https:\/\/script\.google\.com\//.test(CONFIG.scriptUrl)) $("#setupNotice").hidden = false;
+const API = "/api/scouting-for-food";
 
 $("#shiftChoices").innerHTML = CONFIG.shifts.map(s =>
   `<label class="choice"><input type="checkbox" name="shifts" value="${s}"><span><b>${s}</b><small>Drop-off day</small></span></label>`).join("") +
@@ -591,21 +589,15 @@ form.addEventListener("submit", async e => {
   const payload = buildPayload();
   const btn = $("#submitBtn"), status = $("#status");
 
-  if (!/^https:\/\/script\.google\.com\//.test(CONFIG.scriptUrl)) {
-    console.log("Test payload (form not connected):", payload);
-    status.textContent = "This form is not connected yet, so nothing was saved. The response was written to the browser console for testing.";
-    return;
-  }
-
   btn.disabled = true; status.textContent = "Saving your sign-up...";
   try {
-    const res = await fetch(CONFIG.scriptUrl, {
+    const res = await fetch(API + "/submit", {
       method: "POST",
-      headers: {"Content-Type": "text/plain;charset=utf-8"},
+      headers: {"Content-Type": "application/json"},
       body: JSON.stringify(payload)
     });
     const data = await res.json();
-    if (!data.ok) throw new Error(data.error || "The sign-up sheet rejected the response.");
+    if (!data.ok) throw new Error(data.error || "The sign-up was rejected.");
     renderRecap(payload);
     form.hidden = true;
     const done = $("#done"); done.hidden = false; done.focus();
